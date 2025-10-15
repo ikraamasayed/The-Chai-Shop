@@ -1,0 +1,48 @@
+#1 define Model in model.py 
+    *we are taking images as media urls for db that we need to tell the Pillow where to look for the images*
+#2 Now Change the settings for models telling Pillow to look here for the image 
+In settings.py  below STATIC_URL & STATIC_ROOT
+
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+!!! we were telling instead of actual image in DB there will be the urls of the image !!!
+
+#3 Configure URLS so that it directs what to load or present 
+Now, let’s configure our projects urls.py file to reflect/present media files.
+urls.py
+    from django.conf import settings #(this is basically setting.py)
+    from django.conf.urls.static import static
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        #...
+        #...
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#static() will tell what to load InOurCase take MEDIA_URL & MEDIA_ROOT as root  
+
+!!! #3 shows path where image is stored InOurCase (i.e the MEDIA_URL&MEDIA_ROOT)  Load 
+
+#4 Migration  (will write SQL) ADD Data to DB 
+cmd : python manage.py makemigrations chai
+syntax : python manage.py makemigrations AppName
+
+#5 ADD Details View
+?? want to show and list the values of DB  into front-end !!!
+telling to take ChaiVariety object from/of DB and transfer into front-end
+
+APP/views.py 
+    from django.shortcuts import render
+    from .models import ChaiVariety
+
+    def all_chai(request):
+    chais = ChaiVariety.objects.all()
+    return render(request, 'chai/all_chai.html', {'chai': chais})
+
+
+    creating a view for perticular chai (onbutton click) for 
+    import django.shortcuts import get_object_or_404
+    
+    def chai_details(request,chai_id):
+        chai = get_object_or_404(ChaiVariety,pk=chai_id)
+        return render(request,'chai/chai_details.html,{'chai':chai})
